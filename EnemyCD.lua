@@ -117,4 +117,4 @@ SlashCmdList["EnemyCD"] = function(msg)
 	StartTimer(47476)
 	StartTimer(51514)
 end
-SLASH_qEnemyCD1 = "/enemycd"
+SLASH_EnemyCD1 = "/enemycd"
