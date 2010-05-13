@@ -15,7 +15,6 @@ local spells = {
 	[49039] = 120, -- Lichborne
 	[54428] = 60, -- Divine Plea
 	[10278] = 180, -- Hand of Protection
-	[16190] = 300, -- Mana Tide Totem
 	[51514] = 45, -- Hex
 	[15487] = 45, -- Silence
 	[2094] = 120, -- Blind
@@ -27,10 +26,9 @@ local backdrop = {
 }
 
 local icons = {}
-local id = 1
 
 local UpdatePositions = function()
-	for i = 1, id-1 do
+	for i = 1, #icons do
 		icons[i]:ClearAllPoints()
 		if (i == 1) then
 			icons[i]:SetPoint(anchor, UIParent, anchor, x, y)
@@ -45,7 +43,6 @@ local StopTimer = function(icon)
 	icon:SetScript("OnUpdate", nil)
 	icon:Hide()
 	tremove(icons, icon.id)
-	id = id - 1
 	UpdatePositions()
 end
 
@@ -56,9 +53,7 @@ local IconUpdate = function(self, elapsed)
 end
 
 local CreateIcon = function()
-	local icon = CreateFrame("frame")
-	icon:SetParent(UIParent)
-	icon.id = id
+	local icon = CreateFrame("frame", nil, UIParent)
 	icon:SetWidth(size)
 	icon:SetHeight(size)
 	icon:SetBackdrop(backdrop)
@@ -67,26 +62,20 @@ local CreateIcon = function()
 	icon.Cooldown:SetAllPoints(icon)
 	icon.Texture = icon:CreateTexture(nil, "BORDER")
 	icon.Texture:SetAllPoints(icon)
-	icon:SetScript("OnUpdate", IconUpdate)
 	return icon
 end
 
 local StartTimer = function(sID)
 	local _,_,texture = GetSpellInfo(sID)
-	if (not icons[id]) then
-		icons[id] = CreateIcon()
-	end
-	if (id == 1) then
-		icons[id]:SetPoint(anchor, UIParent, anchor, x, y)
-	else
-		icons[id]:SetPoint("BOTTOMLEFT", icons[id-1], "TOPLEFT", 0, spacing)
-	end
-	icons[id].Texture:SetTexture(texture)
-	icons[id].Texture:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-	icons[id].endTime = GetTime() + spells[sID]
-	icons[id]:Show()
-	CooldownFrame_SetTimer(icons[id].Cooldown, GetTime(), spells[sID], 1)
-	id = id + 1
+	local icon = CreateIcon()
+	icon.Texture:SetTexture(texture)
+	icon.Texture:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+	icon.endTime = GetTime() + spells[sID]
+	icon:Show()
+	icon:SetScript("OnUpdate", IconUpdate)
+	CooldownFrame_SetTimer(icon.Cooldown, GetTime(), spells[sID], 1)
+	tinsert(icons, icon)
+	UpdatePositions()
 end
 
 local OnEvent = function(self, event, ...)
@@ -117,4 +106,4 @@ SlashCmdList["EnemyCD"] = function(msg)
 	StartTimer(47476)
 	StartTimer(51514)
 end
-SLASH_EnemyCD1 = "/enemycd"
+SLASH_qEnemyCD1 = "/enemycd"
