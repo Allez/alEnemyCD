@@ -1,7 +1,14 @@
+-- Config start
 local anchor = "CENTER"
 local x, y = -70, -70
 local size = 26
 local spacing = 3
+local show = {
+	"none" = true, 
+	"pvp" = true, 
+	"arena" = true,
+}
+-- Config end
 
 local spells = {
 	[1766] = 10, -- kick
@@ -26,6 +33,7 @@ local backdrop = {
 }
 
 local icons = {}
+local band = bit.band
 
 local UpdatePositions = function()
 	for i = 1, #icons do
@@ -79,11 +87,11 @@ local StartTimer = function(sID)
 end
 
 local OnEvent = function(self, event, ...)
-	if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
+	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName = ...
-		if (eventType == "SPELL_CAST_SUCCESS" and (bit.band(sourceFlags,COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE)) then			
-			if (sourceName ~= UnitName("player")) then
-				if (spells[spellID]) then
+		if eventType == "SPELL_CAST_SUCCESS" and band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE then			
+			if sourceName ~= UnitName("player") then
+				if spells[spellID] and show[select(2, IsInInstance())] then
 					StartTimer(spellID)
 				end
 			end
