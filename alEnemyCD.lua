@@ -4,9 +4,9 @@ local x, y = -70, -70
 local size = 26
 local spacing = 3
 local show = {
-	"none" = true, 
-	"pvp" = true, 
-	"arena" = true,
+	none = true,
+	pvp = true,
+	arena = true,
 }
 -- Config end
 
@@ -96,7 +96,7 @@ local OnEvent = function(self, event, ...)
 				end
 			end
 		end 
-	elseif (event == "ZONE_CHANGED_NEW_AREA") then
+	elseif event == "ZONE_CHANGED_NEW_AREA" then
 		for k, v in pairs(icons) do
 			StopTimer(v)
 		end
