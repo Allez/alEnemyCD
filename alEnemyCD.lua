@@ -11,20 +11,21 @@ local show = {
 -- Config end
 
 local spells = {
-	[1766] = 10, -- kick
-	[6554] = 10, -- pummel
-	[2139] = 24, -- counterspell
-	[19647] = 24, -- spell lock
-	[34322] = 27, -- fear priest
-	[47476] = 120, -- strangulate
-	[47528] = 10, -- mindfreeze
-	[29166] = 180, -- innervate
-	[49039] = 120, -- Lichborne
-	[54428] = 60, -- Divine Plea
-	[1022] = 180, -- Hand of Protection
-	[51514] = 45, -- Hex
-	[15487] = 45, -- Silence
-	[2094] = 120, -- Blind
+	[1766] = 10,	-- Kick
+	[6552] = 10,	-- Pummel
+	[2139] = 24,	-- Counterspell
+	[19647] = 24,	-- Spell Lock
+	[8122] = 30,	-- Psychic Scream
+	[47476] = 120,	-- Strangulate
+	[47528] = 10,	-- Mind Freeze
+	[29166] = 180,	-- Innervate
+	[49039] = 120,	-- Lichborne
+	[54428] = 120,	-- Divine Plea
+	[1022] = 300,	-- Hand of Protection
+	[16190] = 180,	-- Mana Tide Totem
+	[51514] = 45,	-- Hex
+	[15487] = 45,	-- Silence
+	[2094] = 180,	-- Blind
 }
 
 local backdrop = {
