@@ -10,6 +10,17 @@ local show = {
 }
 -- Config end
 
+local config = {
+	["Anchor point"] = anchor,
+	["Icon size"] = size,
+	["Icon spacing"] = spacing,
+	["X offset"] = x,
+	["Y offset"] = y,
+}
+if UIConfig then
+	UIConfig["Enemy cooldowns"] = config
+end
+
 local spells = {
 	[1766] = 10,	-- Kick
 	[6552] = 10,	-- Pummel
@@ -40,9 +51,9 @@ local UpdatePositions = function()
 	for i = 1, #icons do
 		icons[i]:ClearAllPoints()
 		if (i == 1) then
-			icons[i]:SetPoint(anchor, UIParent, anchor, x, y)
+			icons[i]:SetPoint(config["Anchor point"], config["X offset"], config["Y offset"])
 		else
-			icons[i]:SetPoint("BOTTOMLEFT", icons[i-1], "TOPLEFT", 0, spacing)
+			icons[i]:SetPoint("BOTTOMLEFT", icons[i-1], "TOPLEFT", 0, config["Icon spacing"])
 		end
 		icons[i].id = i
 	end
@@ -63,8 +74,8 @@ end
 
 local CreateIcon = function()
 	local icon = CreateFrame("frame", nil, UIParent)
-	icon:SetWidth(size)
-	icon:SetHeight(size)
+	icon:SetWidth(config["Icon size"])
+	icon:SetHeight(config["Icon size"])
 	icon:SetBackdrop(backdrop)
 	icon:SetBackdropColor(0, 0, 0)
 	icon.Cooldown = CreateFrame("Cooldown", nil, icon)
