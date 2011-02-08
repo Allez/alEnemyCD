@@ -2,7 +2,7 @@
 ## Author: Allez
 ## Title: |cff777777al|rEnemyCD
 ## Version: 40000.1
-## Notes: Enemy cooldown tracker
-## OptionalDeps: alInterface 
+## Notes: Enemy cooldown monitor
+## OptionalDeps: alInterface
 
 alEnemyCD.lua

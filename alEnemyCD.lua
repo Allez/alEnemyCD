@@ -2,7 +2,7 @@
 local anchor = "CENTER"
 local x, y = -70, -70
 local size = 26
-local spacing = 3
+local spacing = 5
 local show = {
 	["none"] = true, 
 	["pvp"] = true, 
@@ -11,11 +11,8 @@ local show = {
 -- Config end
 
 local config = {
-	["Anchor point"] = anchor,
 	["Icon size"] = size,
 	["Icon spacing"] = spacing,
-	["X offset"] = x,
-	["Y offset"] = y,
 }
 if UIConfig then
 	UIConfig["Enemy cooldowns"] = config
@@ -41,17 +38,34 @@ local spells = {
 
 local backdrop = {
 	bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=],
-	insets = {top = -1, left = -1, bottom = -1, right = -1},
+	edgeFile = [=[Interface\ChatFrame\ChatFrameBackground]=], edgeSize = 1,
+	insets = {top = 0, left = 0, bottom = 0, right = 0},
 }
 
 local icons = {}
 local band = bit.band
 
+local anchorframe = CreateFrame("Frame", "EnemyCD", UIParent)
+anchorframe:SetSize(size, size)
+anchorframe:SetPoint(anchor, x, y)
+if UIMovableFrames then tinsert(UIMovableFrames, anchorframe) end
+
+local CreateBG = CreateBG or function(parent)
+	local bg = CreateFrame("Frame", nil, parent)
+	bg:SetPoint("TOPLEFT", -1, 1)
+	bg:SetPoint("BOTTOMRIGHT", 1, -1)
+	bg:SetFrameLevel(parent:GetFrameLevel() - 1)
+	bg:SetBackdrop(backdrop)
+	bg:SetBackdropColor(0, 0, 0, 0.5)
+	bg:SetBackdropBorderColor(0, 0, 0, 1)
+	return bg
+end
+
 local UpdatePositions = function()
 	for i = 1, #icons do
 		icons[i]:ClearAllPoints()
-		if (i == 1) then
-			icons[i]:SetPoint(config["Anchor point"], config["X offset"], config["Y offset"])
+		if i == 1 then
+			icons[i]:SetPoint("CENTER", anchorframe, 0, 0)
 		else
 			icons[i]:SetPoint("BOTTOMLEFT", icons[i-1], "TOPLEFT", 0, config["Icon spacing"])
 		end
@@ -76,8 +90,7 @@ local CreateIcon = function()
 	local icon = CreateFrame("frame", nil, UIParent)
 	icon:SetWidth(config["Icon size"])
 	icon:SetHeight(config["Icon size"])
-	icon:SetBackdrop(backdrop)
-	icon:SetBackdropColor(0, 0, 0)
+	icon.bg = CreateBG(icon)
 	icon.Cooldown = CreateFrame("Cooldown", nil, icon)
 	icon.Cooldown:SetAllPoints(icon)
 	icon.Texture = icon:CreateTexture(nil, "BORDER")
