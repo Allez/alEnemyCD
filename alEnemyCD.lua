@@ -3,6 +3,7 @@ local anchor = "CENTER"
 local x, y = -70, -70
 local size = 26
 local spacing = 5
+local direction = "UP"
 local show = {
 	["none"] = true, 
 	["pvp"] = true, 
@@ -13,6 +14,7 @@ local show = {
 local config = {
 	["Icon size"] = size,
 	["Icon spacing"] = spacing,
+	["Direction"] = direction,
 }
 if UIConfig then
 	UIConfig["Enemy cooldowns"] = config
@@ -67,7 +69,16 @@ local UpdatePositions = function()
 		if i == 1 then
 			icons[i]:SetPoint("CENTER", anchorframe, 0, 0)
 		else
-			icons[i]:SetPoint("BOTTOMLEFT", icons[i-1], "TOPLEFT", 0, config["Icon spacing"])
+			direction = config["Direction"]
+			if direction == "UP" then
+				icons[i]:SetPoint("BOTTOM", icons[i-1], "TOP", 0, config["Icon spacing"])
+			elseif direction == "DOWN" then
+				icons[i]:SetPoint("TOP", icons[i-1], "BOTTOM", 0, -config["Icon spacing"])
+			elseif direction == "RIGHT" then
+				icons[i]:SetPoint("LEFT", icons[i-1], "RIGHT", config["Icon spacing"], 0)
+			elseif direction == "LEFT" then
+				icons[i]:SetPoint("RIGHT", icons[i-1], "LEFT", -config["Icon spacing"], 0)
+			end
 		end
 		icons[i].id = i
 	end
