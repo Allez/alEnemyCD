@@ -1,24 +1,22 @@
--- Config start
+   -- Config start
 local anchor = "CENTER"
-local x, y = -70, -70
+local x, y = -390, -70
 local size = 26
-local spacing = 5
-local direction = "UP"
+local spacing = 10
 local show = {
-	["none"] = true, 
-	["pvp"] = true, 
+	["none"] = false, 
+	["pvp"] = false, 
 	["arena"] = true,
 }
+local mult = 768/string.match(GetCVar("gxResolution"), "%d+x(%d+)")/GetCVar("uiScale")
+local function scale(x) return mult*math.floor(x+.5) end
+local backdrop = {
+        bgFile = "Interface\\Buttons\\WHITE8x8",
+		edgeFile = "Interface\\Buttons\\WHITE8x8",
+		tile = false, tileSize = 0, edgeSize = scale(2), 
+		insets = { left = -scale(2), right = -scale(2), top = -scale(2), bottom = -scale(2)}
+    }
 -- Config end
-
-local config = {
-	["Icon size"] = size,
-	["Icon spacing"] = spacing,
-	["Direction"] = direction,
-}
-if UIConfig then
-	UIConfig["Enemy cooldowns"] = config
-end
 
 local spells = {
 	[1766] = 10,	-- Kick
@@ -36,49 +34,45 @@ local spells = {
 	[51514] = 45,	-- Hex
 	[15487] = 45,	-- Silence
 	[2094] = 180,	-- Blind
-}
-
-local backdrop = {
-	bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=],
-	edgeFile = [=[Interface\ChatFrame\ChatFrameBackground]=], edgeSize = 1,
-	insets = {top = 0, left = 0, bottom = 0, right = 0},
+	[5246] = 120, -- Warr Fear
+	[85285] = 10, -- Rebuke
+	[33206] = 180, -- Pain Suppression
+	[1856] = 180, -- Vanish
+	[408] = 20, -- Kidney shot
+	[57994] = 6, -- Wind Shear
+	[20252] = 30, -- Intercept
+	[100] = 15, -- Charge
+	[44572] = 30, -- Deep Freeze
+	[85388] = 45, -- Throwdown
+	[853] = 60, -- Hammer of Justice
+	[47481] = 60, -- Gnaw
+	[19577] = 60, -- Intimidation
+	[19574] = 100, -- Bestial Wrath
+	[642] = 300, -- Divine Shield
+	[871] = 300, -- Shield Wall
+	[48792] = 180, -- Icebound Fortitude
+	[22812] = 60, -- Barkskin
+	[47476] = 120, -- Strangulate
+	[17116] = 180, -- Nature's Swiftness
+	[16188] = 120, -- Nature's Swiftness (Shaman)
+	[47585] = 120, -- Dispersion
+	[64843] = 480, -- Divine Hymn
+	[64901] = 360, -- Hymn of Hope
+	[45438] = 240, -- Ice Block
+	[6940] = 120, -- Hand of Sacrifice
+	[498] = 60, -- Divine Protection
 }
 
 local icons = {}
 local band = bit.band
 
-local anchorframe = CreateFrame("Frame", "EnemyCD", UIParent)
-anchorframe:SetSize(size, size)
-anchorframe:SetPoint(anchor, x, y)
-if UIMovableFrames then tinsert(UIMovableFrames, anchorframe) end
-
-local CreateBG = CreateBG or function(parent)
-	local bg = CreateFrame("Frame", nil, parent)
-	bg:SetPoint("TOPLEFT", -1, 1)
-	bg:SetPoint("BOTTOMRIGHT", 1, -1)
-	bg:SetFrameLevel(parent:GetFrameLevel() - 1)
-	bg:SetBackdrop(backdrop)
-	bg:SetBackdropColor(0, 0, 0, 0.5)
-	bg:SetBackdropBorderColor(0, 0, 0, 1)
-	return bg
-end
-
 local UpdatePositions = function()
 	for i = 1, #icons do
 		icons[i]:ClearAllPoints()
-		if i == 1 then
-			icons[i]:SetPoint("CENTER", anchorframe, 0, 0)
+		if (i == 1) then
+			icons[i]:SetPoint(anchor, UIParent, anchor, x, y)
 		else
-			direction = config["Direction"]
-			if direction == "UP" then
-				icons[i]:SetPoint("BOTTOM", icons[i-1], "TOP", 0, config["Icon spacing"])
-			elseif direction == "DOWN" then
-				icons[i]:SetPoint("TOP", icons[i-1], "BOTTOM", 0, -config["Icon spacing"])
-			elseif direction == "RIGHT" then
-				icons[i]:SetPoint("LEFT", icons[i-1], "RIGHT", config["Icon spacing"], 0)
-			elseif direction == "LEFT" then
-				icons[i]:SetPoint("RIGHT", icons[i-1], "LEFT", -config["Icon spacing"], 0)
-			end
+			icons[i]:SetPoint("BOTTOMLEFT", icons[i-1], "TOPLEFT", 0, spacing)
 		end
 		icons[i].id = i
 	end
@@ -99,9 +93,16 @@ end
 
 local CreateIcon = function()
 	local icon = CreateFrame("frame", nil, UIParent)
-	icon:SetWidth(config["Icon size"])
-	icon:SetHeight(config["Icon size"])
-	icon.bg = CreateBG(icon)
+	icon:SetWidth(size)
+	icon:SetHeight(size)
+	icon:SetFrameLevel(30)
+	local bg = CreateFrame("Frame", nil, icon)
+	bg:SetPoint("TOPLEFT",-scale(2),scale(2))
+	bg:SetPoint("BOTTOMRIGHT",scale(2),-scale(2))
+	bg:SetBackdrop(backdrop)
+	bg:SetBackdropColor(.1,.1,.1,1)
+    bg:SetBackdropBorderColor(.3,.3,.3,1)
+	bg:SetFrameLevel(5)
 	icon.Cooldown = CreateFrame("Cooldown", nil, icon)
 	icon.Cooldown:SetAllPoints(icon)
 	icon.Texture = icon:CreateTexture(nil, "BORDER")
