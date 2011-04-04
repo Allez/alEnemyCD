@@ -44,7 +44,7 @@ local spells = {
 	[100] = 15, -- Charge
 	[44572] = 30, -- Deep Freeze
 	[85388] = 45, -- Throwdown
-	[853] = 60, -- Hammer of Justice
+	[853] = 40, -- Hammer of Justice
 	[47481] = 60, -- Gnaw
 	[19577] = 60, -- Intimidation
 	[19574] = 100, -- Bestial Wrath
@@ -61,6 +61,13 @@ local spells = {
 	[45438] = 240, -- Ice Block
 	[6940] = 120, -- Hand of Sacrifice
 	[498] = 60, -- Divine Protection
+	[1719] = 240, -- Recklesness
+	[31884] = 120, -- Avenging Wrath
+	[50334] = 180, -- Berserk
+	[14185] = 300, -- Preparation
+	[86150] = 300, -- Guardian of the Ancient Kings
+	[49206] = 180, -- Summon Gargoyle
+	[19574] = 70, -- Bestial Wrath
 }
 
 local icons = {}
