@@ -68,6 +68,7 @@ local spells = {
 	[86150] = 300, -- Guardian of the Ancient Kings
 	[49206] = 180, -- Summon Gargoyle
 	[19574] = 70, -- Bestial Wrath
+	[19263] = 110, --Deterrence
 }
 
 local icons = {}
