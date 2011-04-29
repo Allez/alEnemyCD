@@ -30,7 +30,7 @@ local spells = {
 }
 
 local cfg = {}
-if IsAddonLoaded("alInterface") then
+if IsAddOnLoaded("alInterface") then
 	local config = {
 		general = {
 			size = {
