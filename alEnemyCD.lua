@@ -11,15 +11,6 @@ local show = {
 }
 -- Config end
 
-local config = {
-	["Icon size"] = size,
-	["Icon spacing"] = spacing,
-	["Direction"] = direction,
-}
-if UIConfig then
-	UIConfig["Enemy cooldowns"] = config
-end
-
 local spells = {
 	[1766] = 10,	-- Kick
 	[6552] = 10,	-- Pummel
@@ -37,6 +28,64 @@ local spells = {
 	[15487] = 45,	-- Silence
 	[2094] = 180,	-- Blind
 }
+
+local cfg = {}
+if IsAddonLoaded("alInterface") then
+	local config = {
+		general = {
+			size = {
+				order = 1,
+				value = size,
+				type = "range",
+				min = 10,
+				max = 50,
+			},
+			spacing = {
+				order = 2,
+				value = spacing,
+				type = "range",
+				min = 0,
+				max = 30,
+			},
+			direction = {
+				order = 3,
+				value = direction,
+				type = "select",
+				select = {"UP", "DOWN", "LEFT", "RIGHT"},
+			},
+		},
+		showin = {
+			world = {
+				order = 1,
+				value = true,
+			},
+			bg = {
+				order = 2,
+				value = true,
+			},
+			arena = {
+				order = 3,
+				value = true,
+			},
+		},
+	}
+	
+	UIConfigGUI.enemycd = config
+	UIConfig.enemycd = cfg
+	
+	local frame = CreateFrame("Frame")
+	frame:RegisterEvent("VARIABLES_LOADED")
+	frame:SetScript("OnEvent", function(self, event)
+		size = cfg.general.size
+		spacing = cfg.general.spacing
+		direction = cfg.general.direction
+		show = {
+			["none"] = cfg.showin.world, 
+			["pvp"] = cfg.showin.bg, 
+			["arena"] = cfg.showin.arena,
+		}
+	end)
+end
 
 local backdrop = {
 	bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=],
@@ -69,15 +118,14 @@ local UpdatePositions = function()
 		if i == 1 then
 			icons[i]:SetPoint("CENTER", anchorframe, 0, 0)
 		else
-			direction = config["Direction"]
 			if direction == "UP" then
-				icons[i]:SetPoint("BOTTOM", icons[i-1], "TOP", 0, config["Icon spacing"])
+				icons[i]:SetPoint("BOTTOM", icons[i-1], "TOP", 0, spacing)
 			elseif direction == "DOWN" then
-				icons[i]:SetPoint("TOP", icons[i-1], "BOTTOM", 0, -config["Icon spacing"])
+				icons[i]:SetPoint("TOP", icons[i-1], "BOTTOM", 0, -spacing)
 			elseif direction == "RIGHT" then
-				icons[i]:SetPoint("LEFT", icons[i-1], "RIGHT", config["Icon spacing"], 0)
+				icons[i]:SetPoint("LEFT", icons[i-1], "RIGHT", spacing, 0)
 			elseif direction == "LEFT" then
-				icons[i]:SetPoint("RIGHT", icons[i-1], "LEFT", -config["Icon spacing"], 0)
+				icons[i]:SetPoint("RIGHT", icons[i-1], "LEFT", -spacing, 0)
 			end
 		end
 		icons[i].id = i
@@ -99,8 +147,8 @@ end
 
 local CreateIcon = function()
 	local icon = CreateFrame("frame", nil, UIParent)
-	icon:SetWidth(config["Icon size"])
-	icon:SetHeight(config["Icon size"])
+	icon:SetWidth(size)
+	icon:SetHeight(size)
 	icon.bg = CreateBG(icon)
 	icon.Cooldown = CreateFrame("Cooldown", nil, icon)
 	icon.Cooldown:SetAllPoints(icon)
@@ -124,7 +172,7 @@ end
 
 local OnEvent = function(self, event, ...)
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName = ...
+		local timestamp, eventType, _, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName = ...
 		if eventType == "SPELL_CAST_SUCCESS" and band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE then			
 			if sourceName ~= UnitName("player") then
 				if spells[spellID] and show[select(2, IsInInstance())] then
