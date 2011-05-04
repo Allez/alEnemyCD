@@ -30,7 +30,7 @@ local spells = {
 }
 
 local cfg = {}
-if IsAddonLoaded("alInterface") then
+if IsAddOnLoaded("alInterface") then
 	local config = {
 		general = {
 			size = {
@@ -69,10 +69,10 @@ if IsAddonLoaded("alInterface") then
 			},
 		},
 	}
-	
+
 	UIConfigGUI.enemycd = config
 	UIConfig.enemycd = cfg
-	
+
 	local frame = CreateFrame("Frame")
 	frame:RegisterEvent("VARIABLES_LOADED")
 	frame:SetScript("OnEvent", function(self, event)
