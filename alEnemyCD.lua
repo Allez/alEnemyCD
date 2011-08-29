@@ -157,22 +157,16 @@ local CreateIcon = function()
 	return icon
 end
 
-local StartTimer = function(sID, sGUID)
+local StartTimer = function(sID)
 	local _,_,texture = GetSpellInfo(sID)
 	local icon = CreateIcon()
 	icon.Texture:SetTexture(texture)
 	icon.Texture:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 	icon.endTime = GetTime() + spells[sID]
-	icon.guid = sGUID
 	icon:Show()
 	icon:SetScript("OnUpdate", IconUpdate)
 	CooldownFrame_SetTimer(icon.Cooldown, GetTime(), spells[sID], 1)
 	tinsert(icons, icon)
-	if UnitExists("target") and UnitGUID("target") == sGUID then
-		icon:Show()
-	else
-		icon:Hide()
-	end
 	UpdatePositions()
 end
 
@@ -182,25 +176,11 @@ local OnEvent = function(self, event, ...)
 		if eventType == "SPELL_CAST_SUCCESS" and band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE then			
 			if sourceName ~= UnitName("player") then
 				if spells[spellID] and show[select(2, IsInInstance())] then
-					StartTimer(spellID, sourceGUID)
+					StartTimer(spellID)
 				end
 			end
 		end 
-	elseif event == "PLAYER_TARGET_CHANGED" then
-		if UnitExists("target") then
-			for k, v in pairs(icons) do
-				if UnitGUID("target") == v.guid then
-					v:Show()
-				else
-					v:Hide()
-				end
-			end
-		else
-			for k, v in pairs(icons) do
-				v:Hide()
-			end
-		end
-	elseif event == "ZONE_CHANGED_NEW_AREA" then
+	elseif (event == "ZONE_CHANGED_NEW_AREA") then
 		for k, v in pairs(icons) do
 			StopTimer(v)
 		end
@@ -211,7 +191,6 @@ local addon = CreateFrame("frame")
 addon:SetScript('OnEvent', OnEvent)
 addon:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 addon:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-addon:RegisterEvent("PLAYER_TARGET_CHANGED")
 
 SlashCmdList["EnemyCD"] = function(msg) 
 	StartTimer(47528)
